@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Phishing URL Detection</h1>
+    <input type="text" id="urlInput" placeholder="Enter a URL" style="width: 100%; padding: 8px; margin-top: 10px;">
+    <button onclick="classifyUrl()" style="margin-top: 10px; padding: 10px 20px;">Check URL</button>
+    <div id="result"></div>
+</div>
+
+<script>
+async function classifyUrl() {
+    const url = document.getElementById('urlInput').value;
+    
+    if (!url) {
+        document.getElementById('result').innerText = "Please enter a URL.";
+        return;
+    }
+    
+    try {
+        const response = await fetch('http://127.0.0.1:5000/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+    });
+
+        
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('result').innerText = `Result: ${data.result}`;
+        } else {
+            document.getElementById('result').innerText = "Error: Unable to classify the URL.";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('result').innerText = "Error: Unable to reach the server.";
+    }
+}
+</script>
+
+</body>
+</html>
